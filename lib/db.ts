@@ -1,19 +1,26 @@
 import mysql from "mysql2/promise";
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "invoice_app",
-  port: parseInt(process.env.DB_PORT || "3306"),
-  waitForConnections: true,
-  connectionLimit: 5,
-  queueLimit: 0,
-  connectTimeout: 30000,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
-  ssl: process.env.DB_HOST?.includes("aivencloud.com") ? { rejectUnauthorized: false } : undefined,
-});
+function getDbConfig() {
+  const host = process.env.DB_HOST || "localhost";
+  const isAiven = host.includes("aivencloud.com");
+
+  return {
+    host,
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "invoice_app",
+    port: isAiven ? 25596 : parseInt(process.env.DB_PORT || "3306"),
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0,
+    connectTimeout: 30000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+    ssl: isAiven ? { rejectUnauthorized: false } : undefined,
+  };
+}
+
+const pool = mysql.createPool(getDbConfig());
 
 export async function query(sql: string, params?: any[]) {
   const [results] = await pool.execute(sql, params);
