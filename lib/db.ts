@@ -7,8 +7,11 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "invoice_app",
   port: parseInt(process.env.DB_PORT || "3306"),
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 5,
   queueLimit: 0,
+  connectTimeout: 30000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
   ssl: process.env.DB_HOST?.includes("aivencloud.com") ? { rejectUnauthorized: false } : undefined,
 });
 

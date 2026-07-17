@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { query, initializeDatabase } from "@/lib/db";
+import { query } from "@/lib/db";
 import { hashPassword, generateToken } from "@/lib/auth";
 import { saveFile } from "@/lib/upload";
 
 export async function POST(request: NextRequest) {
   try {
-    await initializeDatabase();
     const formData = await request.formData();
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
